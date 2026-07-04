@@ -3,11 +3,12 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { ShoppingCart, Heart, Eye } from "lucide-react";
+import { ShoppingCart, Heart, Eye, Scale } from "lucide-react";
 import { toast } from "react-toastify";
 import { Rating } from "@/components/ui/Rating";
 import { useCartStore } from "@/store/cart";
 import { useWishlistStore } from "@/store/wishlist";
+import { useCompareStore, MAX_COMPARE_ITEMS } from "@/store/compare";
 import { formatPrice, calculateDiscount, getImageUrl, cn } from "@/lib/utils";
 import type { Product } from "@/types";
 
@@ -20,10 +21,12 @@ export function ProductCard({ product, className }: ProductCardProps) {
   const [imgError, setImgError] = useState(false);
   const { addItem, openCart } = useCartStore();
   const { toggle, isWishlisted } = useWishlistStore();
+  const { toggle: toggleCompare, isComparing, items: compareItems } = useCompareStore();
 
   const discount = calculateDiscount(product.price, product.original_price ?? 0);
   const inStock = (product.stock ?? 1) > 0;
   const wishlisted = isWishlisted(product.id);
+  const comparing = isComparing(product.id);
   const imageUrl = imgError ? "/placeholder-product.svg" : getImageUrl(product.images?.[0]?.url);
 
   function handleAddToCart(e: React.MouseEvent) {
@@ -51,6 +54,21 @@ export function ProductCard({ product, className }: ProductCardProps) {
       image_url: product.images?.[0]?.url ?? null,
     });
     toast.success(wishlisted ? "Removed from wishlist" : "Added to wishlist");
+  }
+
+  function handleCompare(e: React.MouseEvent) {
+    e.preventDefault();
+    if (!comparing && compareItems.length >= MAX_COMPARE_ITEMS) {
+      toast.info(`You can compare up to ${MAX_COMPARE_ITEMS} products`);
+      return;
+    }
+    toggleCompare({
+      product_id: product.id,
+      name: product.name,
+      slug: product.slug,
+      price: product.price,
+      image_url: product.images?.[0]?.url ?? null,
+    });
   }
 
   return (
@@ -96,6 +114,16 @@ export function ProductCard({ product, className }: ProductCardProps) {
           >
             <Eye size={15} />
           </Link>
+          <button
+            onClick={handleCompare}
+            className={cn(
+              "w-8 h-8 rounded-full bg-white shadow-sm flex items-center justify-center hover:bg-primary-50 transition-colors",
+              comparing && "text-primary-700"
+            )}
+            aria-label="Add to compare"
+          >
+            <Scale size={15} />
+          </button>
         </div>
       </div>
 

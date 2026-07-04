@@ -34,6 +34,10 @@ function LoginForm() {
     setLoading(true);
     try {
       const { data: tokens } = await authApi.login({ phone: data.phone, password: data.password });
+      if ("requires_2fa" in tokens) {
+        toast.error("2FA is required for this account. Please use the admin login.");
+        return;
+      }
       setTokens(tokens.access_token, tokens.refresh_token);
       const { data: user } = await authApi.me();
       setUser(user);

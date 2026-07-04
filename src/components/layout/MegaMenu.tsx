@@ -49,7 +49,7 @@ export function MegaMenu() {
   const getChildren = (parentId: string) => categories.filter((c) => c.parent_id === parentId);
 
   return (
-    <nav className="bg-white border-b border-gray-200 hidden lg:block">
+    <nav className="bg-white border-b border-gray-200 hidden lg:block dark:bg-gray-950 dark:border-gray-800">
       <div className="container-page">
         <ul className="flex items-center gap-0 relative">
           <li
@@ -71,7 +71,7 @@ export function MegaMenu() {
             >
               <Link
                 href={`/category/${cat.slug}`}
-                className="flex items-center gap-1 px-4 py-3 text-sm font-medium text-gray-700 hover:text-primary-700 hover:bg-primary-50 transition-colors whitespace-nowrap"
+                className="flex items-center gap-1 px-4 py-3 text-sm font-medium text-gray-700 hover:text-primary-700 hover:bg-primary-50 transition-colors whitespace-nowrap dark:text-gray-300 dark:hover:bg-gray-900"
               >
                 <span>{getCategoryIcon(cat.slug)}</span>
                 {cat.name}
@@ -79,7 +79,7 @@ export function MegaMenu() {
               </Link>
 
               {activeCategory?.id === cat.id && getChildren(cat.id).length > 0 && (
-                <div className="absolute top-full left-0 z-50 w-64 bg-white border border-gray-200 shadow-xl rounded-b-lg pt-1 pb-2">
+                <div className="absolute top-full left-0 z-50 w-64 bg-white border border-gray-200 shadow-xl rounded-b-lg pt-1 pb-2 dark:bg-gray-900 dark:border-gray-800">
                   {getChildren(cat.id).map((child) => (
                     <Link
                       key={child.id}
@@ -95,6 +95,14 @@ export function MegaMenu() {
           ))}
 
           <li className="ml-auto">
+            <Link
+              href="/laptop-finder"
+              className="flex items-center gap-1.5 px-4 py-3 text-sm font-semibold text-primary-700 hover:text-primary-800 transition-colors"
+            >
+              💻 Laptop Finder
+            </Link>
+          </li>
+          <li>
             <Link
               href="/pc-builder"
               className="flex items-center gap-1.5 px-4 py-3 text-sm font-semibold text-primary-700 hover:text-primary-800 transition-colors"

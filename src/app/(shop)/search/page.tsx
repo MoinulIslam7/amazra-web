@@ -8,6 +8,7 @@ import { searchApi } from "@/lib/api";
 import { ProductCard } from "@/components/product/ProductCard";
 import { ProductGridSkeleton } from "@/components/ui/Skeleton";
 import { Breadcrumb } from "@/components/layout/Breadcrumb";
+import { trackEvent } from "@/lib/analytics";
 import type { Product, SearchFacets } from "@/types";
 
 const SORT_OPTIONS = [
@@ -53,6 +54,13 @@ function SearchResults() {
   const total = data?.total ?? 0;
   const totalPages = data?.total_pages ?? 1;
   const facets = data?.facets;
+
+  useEffect(() => {
+    if (!isLoading && q) {
+      trackEvent("view_search_results", { search_term: q, results_count: total });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [q, isLoading, total]);
 
   if (!q) {
     return (

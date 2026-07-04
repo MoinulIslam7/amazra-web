@@ -7,6 +7,7 @@ import Image from "next/image";
 import { Search, X } from "lucide-react";
 import { searchApi } from "@/lib/api";
 import { formatPrice, getImageUrl, debounce } from "@/lib/utils";
+import { trackEvent } from "@/lib/analytics";
 import type { Product } from "@/types";
 
 export function SearchBar() {
@@ -58,6 +59,7 @@ export function SearchBar() {
     e.preventDefault();
     if (!query.trim()) return;
     setIsOpen(false);
+    trackEvent("search", { search_term: query.trim() });
     router.push(`/search?q=${encodeURIComponent(query.trim())}`);
   }
 

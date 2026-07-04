@@ -6,13 +6,14 @@ import { CartIcon } from "./CartIcon";
 import { AccountMenu } from "./AccountMenu";
 import { MegaMenu } from "./MegaMenu";
 import { MobileMenu } from "./MobileMenu";
+import { ThemeToggle } from "./ThemeToggle";
 
 export function Header() {
   return (
-    <header className="sticky top-0 z-40 bg-white shadow-sm">
+    <header className="sticky top-0 z-40 bg-white shadow-sm dark:bg-gray-950 dark:shadow-gray-900">
       <TopBar />
 
-      <div className="bg-white border-b border-gray-100">
+      <div className="bg-white border-b border-gray-100 dark:bg-gray-950 dark:border-gray-800">
         <div className="container-page flex items-center gap-4 h-16">
           {/* Mobile menu trigger */}
           <MobileMenu />
@@ -45,6 +46,7 @@ export function Header() {
             >
               <Bell size={22} />
             </Link>
+            <ThemeToggle />
             <CartIcon />
             <AccountMenu />
           </div>

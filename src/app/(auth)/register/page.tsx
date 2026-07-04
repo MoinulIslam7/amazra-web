@@ -44,6 +44,10 @@ export default function RegisterPage() {
         password: data.password,
       });
       const { data: tokens } = await authApi.login({ phone: data.phone, password: data.password });
+      if ("requires_2fa" in tokens) {
+        toast.error("2FA is required for this account. Please log in from the login page.");
+        return;
+      }
       setTokens(tokens.access_token, tokens.refresh_token);
       const { data: user } = await authApi.me();
       setUser(user);

@@ -54,13 +54,20 @@ export function getErrorMessage(error: unknown): string {
 export const authApi = {
   register: (data: { name: string; email?: string; phone: string; password: string }) =>
     apiClient.post("/auth/register", data),
-  login: (data: { phone: string; password: string } | { email: string; password: string }) =>
-    apiClient.post<{ access_token: string; refresh_token: string; token_type: string }>(
-      "/auth/login",
-      data
-    ),
+  login: (
+    data:
+      | { phone: string; password: string; totp_code?: string }
+      | { email: string; password: string; totp_code?: string }
+  ) =>
+    apiClient.post<
+      | { access_token: string; refresh_token: string; token_type: string }
+      | { requires_2fa: true }
+    >("/auth/login", data),
   logout: () => apiClient.post("/auth/logout"),
-  me: () => apiClient.get("/auth/me"),
+  me: () => apiClient.get("/users/me"),
+  setup2fa: () => apiClient.post<{ secret: string; otpauth_uri: string }>("/auth/2fa/setup"),
+  enable2fa: (code: string) => apiClient.post("/auth/2fa/enable", { code }),
+  disable2fa: (code: string) => apiClient.post("/auth/2fa/disable", { code }),
 };
 
 // Products
@@ -69,6 +76,50 @@ export const productsApi = {
     apiClient.get("/products", { params }),
   getBySlug: (slug: string) => apiClient.get(`/products/${slug}`),
   getFeatured: (limit = 8) => apiClient.get("/products", { params: { is_featured: true, page_size: limit } }),
+  priceHistory: (idOrSlug: string) => apiClient.get(`/products/${idOrSlug}/price-history`),
+  // Admin
+  adminList: (params?: Record<string, unknown>) => apiClient.get("/admin/products", { params }),
+  adminGet: (id: string) => apiClient.get(`/admin/products/${id}`),
+  create: (data: Record<string, unknown>) => apiClient.post("/products", data),
+  update: (id: string, data: Record<string, unknown>) => apiClient.put(`/products/${id}`, data),
+  updateStatus: (id: string, status: string) =>
+    apiClient.patch(`/products/${id}/status`, { status }),
+  uploadImage: (id: string, file: File) => {
+    const form = new FormData();
+    form.append("file", file);
+    return apiClient.post(`/products/${id}/images`, form, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+  },
+  setPrimaryImage: (id: string, imageSetId: string) =>
+    apiClient.patch(`/products/${id}/images/${imageSetId}/primary`),
+  deleteImage: (id: string, imageSetId: string) =>
+    apiClient.delete(`/products/${id}/images/${imageSetId}`),
+};
+
+// Reviews
+export const reviewsApi = {
+  list: (productId: string, params?: Record<string, unknown>) =>
+    apiClient.get(`/products/${productId}/reviews`, { params }),
+  create: (productId: string, data: { rating: number; title?: string; comment?: string }) =>
+    apiClient.post(`/products/${productId}/reviews`, data),
+  markHelpful: (reviewId: string) => apiClient.post(`/reviews/${reviewId}/helpful`),
+};
+
+// Q&A
+export const questionsApi = {
+  list: (productId: string, params?: Record<string, unknown>) =>
+    apiClient.get(`/products/${productId}/questions`, { params }),
+  ask: (productId: string, question: string) =>
+    apiClient.post(`/products/${productId}/questions`, { question }),
+  answer: (questionId: string, answer: string) =>
+    apiClient.post(`/questions/${questionId}/answer`, { answer }),
+};
+
+// Laptop Finder
+export const finderApi = {
+  questions: () => apiClient.get("/search/finder/questions"),
+  results: (data: Record<string, unknown>) => apiClient.post("/search/finder/results", data),
 };
 
 // Categories
@@ -76,11 +127,45 @@ export const categoriesApi = {
   list: () => apiClient.get("/categories"),
   getBySlug: (slug: string) => apiClient.get(`/categories/${slug}`),
   getTree: () => apiClient.get("/categories/tree"),
+  create: (data: Record<string, unknown>) => apiClient.post("/categories", data),
+  update: (id: string, data: Record<string, unknown>) => apiClient.put(`/categories/${id}`, data),
+  remove: (id: string) => apiClient.delete(`/categories/${id}`),
 };
 
 // Brands
 export const brandsApi = {
   list: (params?: Record<string, unknown>) => apiClient.get("/brands", { params }),
+  create: (data: Record<string, unknown>) => apiClient.post("/brands", data),
+  update: (id: string, data: Record<string, unknown>) => apiClient.put(`/brands/${id}`, data),
+  uploadLogo: (id: string, file: File) => {
+    const form = new FormData();
+    form.append("file", file);
+    return apiClient.post(`/brands/${id}/logo`, form, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+  },
+};
+
+// Bulk product import
+export const importsApi = {
+  upload: (file: File) => {
+    const form = new FormData();
+    form.append("file", file);
+    return apiClient.post<{ job_id: string }>("/products/import", form, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+  },
+  status: (jobId: string) => apiClient.get(`/products/import/${jobId}`),
+  templateUrl: () => `${BASE_URL}/api/v1/products/import/template`,
+};
+
+// Admin: inventory, orders, payments (for dashboard + inventory screens)
+export const adminApi = {
+  lowStock: (branchId?: string) =>
+    apiClient.get("/inventory/low-stock", { params: branchId ? { branch_id: branchId } : {} }),
+  orders: (params?: Record<string, unknown>) => apiClient.get("/admin/orders", { params }),
+  reconciliation: (date: string) =>
+    apiClient.get("/admin/payments/reconciliation", { params: { date } }),
 };
 
 // Search

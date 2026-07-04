@@ -58,10 +58,11 @@ export interface Product {
 }
 
 export interface ProductImage {
-  id: string;
+  image_set_id: string;
   url: string;
-  alt?: string;
-  position: number;
+  size: "thumbnail" | "medium" | "large";
+  sort_order: number;
+  is_primary: boolean;
 }
 
 export interface ProductListResponse {
@@ -166,14 +167,64 @@ export interface OrderItem {
 
 export interface Review {
   id: string;
-  user_id: string;
   user_name: string;
-  product_id: string;
   rating: number;
-  comment: string;
+  title: string | null;
+  comment: string | null;
   is_verified_purchase: boolean;
   helpful_count: number;
   created_at: string;
+}
+
+export interface ReviewListResponse {
+  items: Review[];
+  total: number;
+}
+
+export interface ProductQuestion {
+  id: string;
+  question: string;
+  answer: string | null;
+  answered_at: string | null;
+  created_at: string;
+  user_name: string;
+}
+
+export interface QuestionListResponse {
+  items: ProductQuestion[];
+  total: number;
+}
+
+export interface PriceHistoryEntry {
+  old_price: string;
+  new_price: string;
+  changed_at: string;
+}
+
+export interface PriceHistoryResponse {
+  current_price: string;
+  history: PriceHistoryEntry[];
+}
+
+export interface FinderQuestion {
+  id: string;
+  label: string;
+  type: string;
+  options?: string[];
+  min?: number;
+  max?: number;
+  step?: number;
+}
+
+export interface FinderResult {
+  id: string;
+  name: string;
+  slug: string;
+  brand: string | null;
+  category: string | null;
+  price: number;
+  match_score: number;
+  match_explanation: string[];
 }
 
 export interface Notification {
@@ -195,6 +246,28 @@ export interface PaginatedResponse<T> {
   page: number;
   page_size: number;
   total_pages: number;
+}
+
+export interface ImportJobStatus {
+  job_id: string;
+  status: "pending" | "processing" | "completed" | "failed";
+  total_rows: number;
+  processed_rows: number;
+  success_count: number;
+  error_count: number;
+  errors: { row_number: number; message: string }[];
+}
+
+export interface LowStockItem {
+  product_id: string;
+  product_name: string;
+  product_slug: string;
+  branch_id: string;
+  branch_name: string;
+  quantity: number;
+  reserved_qty: number;
+  available_qty: number;
+  low_stock_threshold: number;
 }
 
 export interface ProductFilters {
