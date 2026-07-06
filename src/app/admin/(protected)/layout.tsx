@@ -10,6 +10,10 @@ import {
   Tag,
   Upload,
   LogOut,
+  ShoppingBag,
+  RotateCcw,
+  Warehouse,
+  BarChart3,
 } from "lucide-react";
 import { authApi } from "@/lib/api";
 import { useAuthStore } from "@/store/auth";
@@ -17,10 +21,14 @@ import { getAdminRole, isAdminUser } from "@/lib/admin-auth";
 
 const NAV_ITEMS = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/admin/orders", label: "Orders", icon: ShoppingBag },
+  { href: "/admin/returns", label: "Returns & Warranty", icon: RotateCcw },
+  { href: "/admin/inventory", label: "Inventory", icon: Warehouse },
   { href: "/admin/products", label: "Products", icon: Package },
   { href: "/admin/categories", label: "Categories", icon: FolderTree },
   { href: "/admin/brands", label: "Brands", icon: Tag },
   { href: "/admin/import", label: "Bulk Import", icon: Upload },
+  { href: "/admin/analytics", label: "Analytics", icon: BarChart3 },
 ];
 
 export default function AdminProtectedLayout({ children }: { children: React.ReactNode }) {

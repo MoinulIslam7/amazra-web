@@ -248,6 +248,145 @@ export interface PaginatedResponse<T> {
   total_pages: number;
 }
 
+export interface AdminOrderDetail {
+  id: string;
+  reference: string;
+  status: OrderStatus;
+  total_amount: string;
+  discount_amount: string;
+  shipping_amount: string;
+  payment_status: PaymentStatus;
+  payment_method: PaymentMethod;
+  payment_ref: string | null;
+  delivery_address: Address;
+  tracking_number: string | null;
+  notes: string | null;
+  created_at: string;
+  customer_name: string;
+  customer_email: string | null;
+  customer_phone: string;
+  branch_name: string | null;
+  items: {
+    product_id: string;
+    product_name: string;
+    quantity: number;
+    unit_price: string;
+    total_price: string;
+  }[];
+  status_history: {
+    status: string;
+    changed_by: string | null;
+    changed_by_name: string | null;
+    changed_at: string;
+    note: string | null;
+  }[];
+}
+
+export interface ReturnRequest {
+  id: string;
+  order_id: string;
+  order_reference: string;
+  user_id: string;
+  customer_name: string;
+  items: { product_id: string; quantity: number }[];
+  reason: string | null;
+  status: "pending" | "approved" | "rejected" | "completed";
+  created_at: string;
+}
+
+export interface WarrantyClaim {
+  id: string;
+  order_id: string;
+  order_reference: string;
+  product_id: string;
+  product_name: string;
+  user_id: string;
+  customer_name: string;
+  issue_desc: string;
+  status: "pending" | "approved" | "rejected" | "completed";
+  created_at: string;
+}
+
+export interface InventoryLevel {
+  product_id: string;
+  branch_id: string;
+  branch_name: string;
+  branch_address: string;
+  branch_phone: string;
+  branch_active: boolean;
+  quantity: number;
+  reserved_qty: number;
+  available_qty: number;
+  low_stock_threshold: number;
+}
+
+export interface InventoryTransfer {
+  id: string;
+  product_id: string;
+  from_branch_id: string;
+  to_branch_id: string;
+  quantity: number;
+  status: "pending" | "approved" | "in_transit" | "completed";
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Branch {
+  id: string;
+  name: string;
+  code: string;
+  address: string;
+  city: string;
+  phone: string;
+}
+
+export interface SalesSummary {
+  daily: { date: string; order_count: number; revenue: string }[];
+  total_orders: number;
+  total_revenue: string;
+  average_order_value: string;
+}
+
+export interface CategoryRevenue {
+  category_id: string;
+  category_name: string;
+  units_sold: number;
+  revenue: string;
+}
+
+export interface BranchRevenue {
+  branch_id: string;
+  branch_name: string;
+  order_count: number;
+  revenue: string;
+}
+
+export interface TopProduct {
+  product_id: string;
+  product_name: string;
+  product_slug: string;
+  units_sold: number;
+  revenue: string;
+}
+
+export interface CustomerAcquisitionDay {
+  date: string;
+  new_customers: number;
+  returning_customers: number;
+}
+
+export interface Coupon {
+  id: string;
+  code: string;
+  type: "percentage" | "fixed" | "free_shipping";
+  value: string;
+  min_order: string | null;
+  max_uses: number | null;
+  expires_at: string | null;
+  is_active: boolean;
+  usage_count: number;
+}
+
 export interface ImportJobStatus {
   job_id: string;
   status: "pending" | "processing" | "completed" | "failed";

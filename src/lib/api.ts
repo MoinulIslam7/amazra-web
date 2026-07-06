@@ -192,6 +192,78 @@ export const ordersApi = {
   create: (data: Record<string, unknown>) => apiClient.post("/orders", data),
   list: (params?: Record<string, unknown>) => apiClient.get("/orders", { params }),
   getById: (id: string) => apiClient.get(`/orders/${id}`),
+  // Admin
+  adminList: (params?: Record<string, unknown>) => apiClient.get("/admin/orders", { params }),
+  adminGet: (id: string) => apiClient.get(`/admin/orders/${id}`),
+  adminUpdateStatus: (id: string, status: string, note?: string) =>
+    apiClient.patch(`/admin/orders/${id}/status`, { status, note }),
+  adminInvoice: (id: string) =>
+    apiClient.get(`/admin/orders/${id}/invoice`, { responseType: "blob" }),
+  adminExportUrl: (params?: Record<string, unknown>) => {
+    const qs = new URLSearchParams(params as Record<string, string>).toString();
+    return `${BASE_URL}/api/v1/admin/orders/export${qs ? `?${qs}` : ""}`;
+  },
+};
+
+// Returns & warranty claims (admin)
+export const returnsApi = {
+  adminList: (status?: string) =>
+    apiClient.get("/admin/returns", { params: status ? { status } : {} }),
+  adminUpdateStatus: (id: string, status: string, note?: string) =>
+    apiClient.patch(`/admin/returns/${id}/status`, { status, note }),
+};
+
+export const warrantyApi = {
+  adminList: (status?: string) =>
+    apiClient.get("/admin/warranty-claims", { params: status ? { status } : {} }),
+  adminUpdateStatus: (id: string, status: string, note?: string) =>
+    apiClient.patch(`/admin/warranty-claims/${id}/status`, { status, note }),
+};
+
+// Inventory (admin)
+export const inventoryApi = {
+  getByProduct: (productId: string) => apiClient.get(`/inventory/${productId}`),
+  adjust: (data: {
+    product_id: string;
+    branch_id: string;
+    delta: number;
+    reason: string;
+    low_stock_threshold?: number;
+  }) => apiClient.post("/inventory/adjust", data),
+  lowStock: (branchId?: string) =>
+    apiClient.get("/inventory/low-stock", { params: branchId ? { branch_id: branchId } : {} }),
+  listTransfers: (params?: Record<string, unknown>) =>
+    apiClient.get("/inventory/transfers", { params }),
+  createTransfer: (data: {
+    product_id: string;
+    from_branch_id: string;
+    to_branch_id: string;
+    quantity: number;
+  }) => apiClient.post("/inventory/transfer", data),
+  updateTransferStatus: (id: string, status: string) =>
+    apiClient.patch(`/inventory/transfers/${id}/status`, { status }),
+};
+
+// Coupons (admin)
+export const couponsApi = {
+  list: () => apiClient.get("/coupons"),
+  create: (data: Record<string, unknown>) => apiClient.post("/coupons", data),
+};
+
+// Analytics (admin)
+export const analyticsApi = {
+  sales: (startDate: string, endDate: string) =>
+    apiClient.get("/admin/analytics/sales", { params: { start_date: startDate, end_date: endDate } }),
+  byCategory: (startDate: string, endDate: string) =>
+    apiClient.get("/admin/analytics/by-category", { params: { start_date: startDate, end_date: endDate } }),
+  byBranch: (startDate: string, endDate: string) =>
+    apiClient.get("/admin/analytics/by-branch", { params: { start_date: startDate, end_date: endDate } }),
+  topProducts: (startDate: string, endDate: string, limit = 20) =>
+    apiClient.get("/admin/analytics/top-products", {
+      params: { start_date: startDate, end_date: endDate, limit },
+    }),
+  customers: (startDate: string, endDate: string) =>
+    apiClient.get("/admin/analytics/customers", { params: { start_date: startDate, end_date: endDate } }),
 };
 
 // Payments

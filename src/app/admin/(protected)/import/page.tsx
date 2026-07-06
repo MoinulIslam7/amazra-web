@@ -5,6 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Download, Upload, FileWarning, CheckCircle2 } from "lucide-react";
 import { toast } from "react-toastify";
 import { importsApi, getErrorMessage } from "@/lib/api";
+import { exportToCsv } from "@/lib/csv";
 import type { ImportJobStatus } from "@/types";
 
 export default function AdminImportPage() {
@@ -42,14 +43,11 @@ export default function AdminImportPage() {
 
   function downloadErrorReport() {
     if (!job?.errors?.length) return;
-    const rows = ["row_number,message", ...job.errors.map((e) => `${e.row_number},"${e.message.replace(/"/g, '""')}"`)];
-    const blob = new Blob([rows.join("\n")], { type: "text/csv" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `import_errors_${jobId}.csv`;
-    a.click();
-    URL.revokeObjectURL(url);
+    exportToCsv(
+      `import_errors_${jobId}.csv`,
+      ["row_number", "message"],
+      job.errors.map((e) => [e.row_number, e.message])
+    );
   }
 
   const progressPct = job && job.total_rows > 0 ? Math.round((job.processed_rows / job.total_rows) * 100) : 0;

@@ -1002,12 +1002,12 @@ Users can build, save, share, and load PC builds. Builds can be added to cart.
 
 ### Tasks
 
-- [ ] Order list with filters (status, date, branch, payment method)
-- [ ] Order detail page: items, timeline, change status, print invoice
-- [ ] Return & warranty claim management queue
-- [ ] Inventory dashboard: per-branch stock levels, low-stock list
-- [ ] Stock transfer request form and approval UI
-- [ ] Manual stock adjustment form
+- [x] Order list with filters (status, date, branch, payment method — search by reference, not payment method, since admin list doesn't filter on it)
+- [x] Order detail page: items, timeline, change status, print invoice — new `GET/PATCH /admin/orders/{id}` + `GET /admin/orders/{id}/invoice` endpoints (admin order detail/invoice didn't exist before, only customer-scoped versions did)
+- [x] Return & warranty claim management queue — new `PATCH /admin/warranty-claims/{id}/status` endpoint (previously missing entirely)
+- [x] Inventory dashboard: per-branch stock levels, low-stock list — low-stock list + per-product stock lookup (search product → per-branch levels); no all-products-at-once grid
+- [x] Stock transfer request form and approval UI
+- [x] Manual stock adjustment form
 
 ---
 
@@ -1015,13 +1015,13 @@ Users can build, save, share, and load PC builds. Builds can be added to cart.
 
 ### Tasks
 
-- [ ] Sales dashboard with date picker: revenue chart, order count, AOV
-- [ ] Revenue by category (bar chart)
-- [ ] Revenue by branch (branch comparison)
-- [ ] Top 20 products (table with units sold, revenue)
-- [ ] Customer acquisition chart (new vs returning)
-- [ ] Export any report to CSV / Excel
-- [ ] Coupon usage report
+- [x] Sales dashboard with date picker: revenue chart, order count, AOV — new `GET /admin/analytics/sales`
+- [x] Revenue by category (bar chart) — new `GET /admin/analytics/by-category`
+- [x] Revenue by branch (branch comparison) — new `GET /admin/analytics/by-branch`
+- [x] Top 20 products (table with units sold, revenue) — new `GET /admin/analytics/top-products`
+- [x] Customer acquisition chart (new vs returning) — new `GET /admin/analytics/customers` (first-order-date based)
+- [x] Export any report to CSV / Excel — client-side CSV export per section (no Excel/.xlsx)
+- [x] Coupon usage report (used existing `GET /coupons` usage_count, already returned)
 
 ---
 
@@ -1262,8 +1262,8 @@ Users can build, save, share, and load PC builds. Builds can be added to cart.
 | 7.5 Cart, checkout & tracking    | Frontend Web       | ✅ Done |
 | 8.1 Admin auth & layout          | Admin Dashboard    | ✅ Done |
 | 8.2 Product management UI        | Admin Dashboard    | ✅ Done |
-| 8.3 Order & inventory UI         | Admin Dashboard    | ⬜ Todo |
-| 8.4 Analytics UI                 | Admin Dashboard    | ⬜ Todo |
+| 8.3 Order & inventory UI         | Admin Dashboard    | ✅ Done |
+| 8.4 Analytics UI                 | Admin Dashboard    | ✅ Done |
 | 9.1 Mobile app foundation        | Mobile App         | ⬜ Todo |
 | 9.2 Home, browse & search        | Mobile App         | ⬜ Todo |
 | 9.3 Cart, checkout & orders      | Mobile App         | ⬜ Todo |
