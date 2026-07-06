@@ -50,7 +50,7 @@ export default function CategoryPage() {
   });
 
   const queryParams = {
-    category: slug,
+    category: category?.id,
     sort,
     page,
     page_size: 16,
@@ -66,6 +66,7 @@ export default function CategoryPage() {
       const { data } = await productsApi.list(queryParams);
       return data;
     },
+    enabled: !!category?.id,
     staleTime: 60 * 1000,
   });
 
